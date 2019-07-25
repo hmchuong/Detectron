@@ -79,6 +79,8 @@ class COCOStuffDataset(object):
                 xmax = np.max(pos[1])
                 ymin = np.min(pos[0])
                 ymax = np.max(pos[0])
+                if (xmax - xmin) * (ymax - ymin) == 0:
+                    continue
                 boxes.append([xmin, ymin, xmax, ymax])
                 
                 # Get instance mask
@@ -86,6 +88,7 @@ class COCOStuffDataset(object):
                 masks.append(instance_mask)
                 
                 # Add label
+                if mask_label not in self.label_indices: print(mask_label)
                 labels.append(mask_label + 1)
         
         boxes = torch.as_tensor(boxes, dtype=torch.float32)

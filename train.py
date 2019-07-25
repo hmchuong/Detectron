@@ -36,10 +36,10 @@ def main(args):
     for epoch in mb_progressbar:
         # Training
         loss = train_one_epoch(model, optimizer, train_dataloader, mb_progressbar, device)
-        
+        print("TRAIN")
         # Evaluating
         evalutator = evaluate(model, val_dataloader, mb_progressbar, device)
-        
+        print("DONE EVAL")
         lr_scheduler.step()
         torch.save(model.state_dict(), os.path.join(args.log_dir, "model-{}.pth".format(epoch)))
         

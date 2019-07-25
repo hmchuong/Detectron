@@ -34,7 +34,7 @@ class CocStuffEvaluator(object):
 
         self.coco_eval.cocoRes = coco_res
         self.coco_eval.params.imgIds = list(img_ids)
-        img_ids, eval_imgs = evaluate(coco_eval)
+        img_ids, eval_imgs = evaluate(self.coco_eval)
 
         self.eval_imgs.append(eval_imgs)
 

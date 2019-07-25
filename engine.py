@@ -110,6 +110,7 @@ def evaluate(model: torch.nn.Module,
                 dataset['images'].append(img_dict)
                 bboxes = target["boxes"]
                 bboxes[:, 2:] -= bboxes[:, :2]
+                areas = (bboxes[:, 3] * bboxes[:, 2]).tolist()
                 bboxes = bboxes.tolist()
                 labels = target['labels'].tolist()
                 areas = (boxes[:, 3] * boxes[:, 2]).tolist()

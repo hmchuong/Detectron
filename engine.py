@@ -11,6 +11,7 @@ from cocostuff_eval import CocStuffEvaluator
 from pycocotools.coco import COCO
 from pycocotools import mask as coco_mask
 from pycocotools.cocostuffeval import COCOStuffeval
+from category import catdata
 
 def train_one_epoch(model: nn.Module, 
                     optimizer: torch.optim.Optimizer, 
@@ -118,11 +119,12 @@ def evaluate(model: torch.nn.Module,
                 masks = masks.permute(0, 2, 1).contiguous().permute(0, 2, 1)
                 
                 num_obj = len(bboxes)
+                have_object = False
                 for i in range(num_obj):
-                    """
+                    
                     if labels[i] > 183 or labels[i] < 92:
                         continue
-                        """
+                    have_object = True
                     ann = {}
                     ann['image_id'] = image_id
                     ann['bbox'] = bboxes[i]
@@ -137,12 +139,12 @@ def evaluate(model: torch.nn.Module,
                     dataset['annotations'].append(ann)
                     
                     ann_id += 1
-        dataset['categories'] = [{'id': i} for i in sorted(categories)]
+        dataset['categories'] = catdata
         coco_pred.dataset = dataset
         coco_pred.createIndex()
     import time
     before = time.clock()
-    coco_eval = COCOStuffeval(coco_gt, coco_pred, stuffStartId=0, stuffEndId=182, addOther=False)
+    coco_eval = COCOStuffeval(coco_gt, coco_pred, stuffStartId=92, stuffEndId=182, addOther=True)
     coco_eval.evaluate()
     coco_eval.summarize()
     after = time.clock()

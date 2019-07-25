@@ -10,6 +10,7 @@ from pycocotools import mask as coco_mask
 from pycocotools.coco import COCO
 
 #import transforms as T
+from category import catdata
 
 
 class FilterAndRemapCocoCategories(object):
@@ -172,6 +173,8 @@ def convert_to_coco_api(ds):
             keypoints = keypoints.reshape(keypoints.shape[0], -1).tolist()
         num_objs = len(bboxes)
         for i in range(num_objs):
+            if labels[i] > 183 or labels[i] < 92:
+                continue
             ann = {}
             ann['image_id'] = image_id
             ann['bbox'] = bboxes[i]
@@ -187,7 +190,7 @@ def convert_to_coco_api(ds):
                 ann['num_keypoints'] = sum(k != 0 for k in keypoints[i][2::3])
             dataset['annotations'].append(ann)
             ann_id += 1
-    dataset['categories'] = [{'id': i} for i in sorted(categories)]
+    dataset['categories'] = catdata #[{'id': i} for i in sorted(categories)]
     coco_ds.dataset = dataset
     coco_ds.createIndex()
     return coco_ds

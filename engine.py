@@ -116,11 +116,10 @@ def evaluate(model: torch.nn.Module,
                 iscrowd = [0] * len(labels)
                 masks = target['masks']
                 masks = masks.permute(0, 2, 1).contiguous().permute(0, 2, 1)
-                print(masks.size(), img_dict)
                 
                 num_obj = len(bboxes)
                 for i in range(num_obj):
-                    if labels[i] < 183 and labels[i] >= 92:
+                    if labels[i] > 183 and labels[i] < 92:
                         continue
                     ann = {}
                     ann['image_id'] = image_id

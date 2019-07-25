@@ -185,7 +185,9 @@ def convert_to_coco_api(ds):
             ann['iscrowd'] = iscrowd[i]
             ann['id'] = ann_id
             if 'masks' in targets:
-                ann["segmentation"] = coco_mask.encode(masks[i].numpy())
+                mask = masks[i].numpy()
+                mask[mask == 0] = 183
+                ann["segmentation"] = coco_mask.encode(mask)
             if 'keypoints' in targets:
                 ann['keypoints'] = keypoints[i]
                 ann['num_keypoints'] = sum(k != 0 for k in keypoints[i][2::3])

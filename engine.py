@@ -119,16 +119,14 @@ def evaluate(model: torch.nn.Module,
                 masks = masks.permute(0, 2, 1).contiguous().permute(0, 2, 1)
                 
                 num_obj = len(bboxes)
-                have_object = False
                 for i in range(num_obj):
-                    
-                    if labels[i] > 183 or labels[i] < 92:
-                        continue
-                    have_object = True
+                    label = labels[i]
+                    if labels[i] > 182 or labels[i] < 92:
+                        label = 183
                     ann = {}
                     ann['image_id'] = image_id
                     ann['bbox'] = bboxes[i]
-                    ann['category_id'] = labels[i]
+                    ann['category_id'] = label
                     categories.add(labels[i])
                     ann['area'] = areas[i]
                     ann['iscrowd'] = iscrowd[i]
@@ -139,10 +137,6 @@ def evaluate(model: torch.nn.Module,
                     dataset['annotations'].append(ann)
                     
                     ann_id += 1
-                if not have_object:
-                    ann = {}
-                    ann['image_id'] = image_id
-                    dataset['annotations'].append(ann)
         dataset['categories'] = catdata
         coco_pred.dataset = dataset
         coco_pred.createIndex()

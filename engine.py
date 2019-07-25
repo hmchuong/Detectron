@@ -48,7 +48,7 @@ def train_one_epoch(model: nn.Module,
         
         loss_dict = model(images, targets)
         losses = sum(loss for loss in loss_dict.values())
-        
+
         # Back propagation
         optimizer.zero_grad()
         losses.backward()
@@ -69,7 +69,7 @@ def train_one_epoch(model: nn.Module,
 
 def evaluate(model: torch.nn.Module, 
              data_loader: torch.utils.data.DataLoader, 
-             master_progressbar: fastprogress.master_bar,
+             master_progress_bar: fastprogress.master_bar,
              device: str="cpu"):
     
     n_threads = torch.get_num_threads()
@@ -78,7 +78,7 @@ def evaluate(model: torch.nn.Module,
     model.eval()
     coco = get_coco_api_from_dataset(data_loader.dataset)
     coco_evaluator = CocStuffEvaluator(coco)
-    with torch.to_grad(): # Turn off gradient
+    with torch.no_grad(): # Turn off gradient
         
         # For each batch
         for batch, (images, targets) in enumerate(progress_bar(data_loader, parent=master_progress_bar)):
@@ -86,7 +86,7 @@ def evaluate(model: torch.nn.Module,
             images = list(image.to(device) for image in images)
             
             # Predict outputs
-            outputs = model(image)
+            outputs = model(images)
             
             # Move to CPU for evaluation
             outputs = [{k: v.to("cpu") for k, v in t.items()} for t in outputs]

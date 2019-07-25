@@ -61,6 +61,7 @@ import numpy as np
 def standardlize_masks(masks):
     no_masks = masks.size()[0]
     new_masks = masks.cpu().numpy()
+    print(np.unique(np.sum(new_masks, axis=0)))
     if no_masks == 1:
         return new_masks
     for i in range(1,no_masks):

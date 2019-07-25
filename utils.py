@@ -57,6 +57,7 @@ def reduce_dict(input_dict: dict, average: bool=True):
 def collate_fn(batch):
     return tuple(zip(*batch))
 
+import numpy as np
 def standardlize_masks(masks):
     no_masks = masks.size()[0]
     new_masks = masks.cpu().numpy()

@@ -1,5 +1,6 @@
 """Train the COCO Stuff dataset
 """
+import os
 import argparse
 from pathlib import Path
 
@@ -8,6 +9,7 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 
 from fastprogress import master_bar
+from tensorboardX import SummaryWriter
 
 from dataset import COCOStuffDataset
 from utils import collate_fn
@@ -15,7 +17,9 @@ from model import get_mask_rcnn
 from engine import train_one_epoch, evaluate
 
 
+
 def main(args):
+    writer = SummaryWriter(args.log_dir)
     
     train_dataset = COCOStuffDataset(image_dir=args.train_imagedir, annotation_dir=args.train_annodir)
     val_dataset = COCOStuffDataset(image_dir=args.val_imagedir, annotation_dir=args.val_annodir)
@@ -36,11 +40,17 @@ def main(args):
     Path(args.log_dir).mkdir(exist_ok=True)
     for epoch in mb_progressbar:
         # Training
-        loss = train_one_epoch(model, optimizer, train_dataloader, mb_progressbar, device)
+        mean_loss, loss_dict = train_one_epoch(model, optimizer, train_dataloader, mb_progressbar, device)
+        writer.add_scalar('train_mean_loss', mean_loss, epoch)
+        for k, v in loss_dict.items():
+            writer.add_scalar(k, v, epoch)
         
         # Evaluating
-        evalutator = evaluate(model, val_dataloader, mb_progressbar, device)
-
+        metrics = evaluate(model, val_dataloader, mb_progressbar, device)
+        metric_names = ['mean_iou', 'fw_iou', 'mean_accuracy', 'pixel_accuracy', 'super_mean_iou', 'super_fw_iou', 'super_mean_accuracy', 'super_pixel_accuracy']
+        for i, metric_name in enumerate(metric_names):
+            writer.add_scalar('mean_iou', metrics[i], epoch)
+            
         lr_scheduler.step()
         torch.save(model.state_dict(), os.path.join(args.log_dir, "model-{}.pth".format(epoch)))
         

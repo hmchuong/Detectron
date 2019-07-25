@@ -42,6 +42,7 @@ def train_one_epoch(model: nn.Module,
     # Switch model to training mode
     model.train()
     training_loss = 0  # Storing total loss
+    loss_dict = {}
     
     # For each batch
     train_progress_bar = progress_bar(data_loader, parent=master_progress_bar)
@@ -61,19 +62,19 @@ def train_one_epoch(model: nn.Module,
         
         # Log loss
         loss_dict_reduced = reduce_dict(loss_dict)
+        loss_dict = {k: v + loss_dict.get(k, 0) for k, v in loss_dict_reduced.items()}
         losses_reduced = sum(loss for loss in loss_dict_reduced.values())
         training_loss += losses_reduced.item()
 
         mean_loss = training_loss / (batch + 1)
-        other_loss = log_loss(loss_dict_reduced)
-        log = "Mean: %.2f %s" % (mean_loss, other_loss)
+        log = "Loss: %.2f" % (mean_loss)
         master_progress_bar.child.comment = log
 
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
     
     # Return training loss
-    return training_loss / len(data_loader)
+    return training_loss / len(data_loader), {k: v/len(data_loader) for k, v in loss_dict.items()}
 
 
 def evaluate(model: torch.nn.Module, 
@@ -149,7 +150,7 @@ def evaluate(model: torch.nn.Module,
     after = time.clock()
     print('Evaluation took %.2fs!' % (after - before))
     
-    return coco_eval
+    return coco_eval.stats
     
             
         

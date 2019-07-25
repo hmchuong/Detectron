@@ -1,11 +1,13 @@
 import torch
 import torch.distributed as dist
 
+
 def log_loss(input_dict: dict):
     log = ""
     for k, v in input_dict.items():
-        log += "%s: %.2f\t" % (k,v.item())
+        log += "%s: %.2f\t" % (k.replace("loss_", ""), v.item())
     return log
+
 
 def is_dist_avail_and_initialized():
     if not dist.is_available():

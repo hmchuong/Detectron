@@ -142,7 +142,6 @@ def _coco_remove_images_without_annotations(dataset, cat_list=None):
     dataset = torch.utils.data.Subset(dataset, ids)
     return dataset
 
-
 def convert_to_coco_api(ds):
     coco_ds = COCO()
     ann_id = 0
@@ -203,7 +202,7 @@ def get_coco_api_from_dataset(dataset):
     if isinstance(dataset, torchvision.datasets.CocoDetection):
         return dataset.coco
     return convert_to_coco_api(dataset)
-
+     
 
 class CocoDetection(torchvision.datasets.CocoDetection):
     def __init__(self, img_folder, ann_file, transforms):

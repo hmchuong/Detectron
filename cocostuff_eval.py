@@ -34,7 +34,7 @@ class CocStuffEvaluator(object):
 
         self.coco_eval.cocoRes = coco_res
         self.coco_eval.params.imgIds = list(img_ids)
-        img_ids, eval_imgs = evaluate(self.coco_eval)
+        #img_ids, eval_imgs = evaluate(self.coco_eval)
 
         self.eval_imgs.append(eval_imgs)
 
@@ -42,10 +42,8 @@ class CocStuffEvaluator(object):
         self.eval_imgs = np.concatenate(self.eval_imgs, 2)
         create_common_coco_eval(self.coco_eval, self.img_ids, self.eval_imgs)
 
-    def accumulate(self):
-        coco_eval.accumulate()
-
     def summarize(self):
+        coco_eval.evaluate()
         coco_eval.summarize()
 
     def prepare(self, predictions):
@@ -227,54 +225,6 @@ def loadRes(self, resFile):
     res.dataset['annotations'] = anns
     createIndex(res)
     return res
-
-
-def evaluate(self):
-    '''
-    Run per image evaluation on given images and store results (a list of dict) in self.evalImgs
-    :return: None
-    '''
-    # tic = time.time()
-    # print('Running per image evaluation...')
-    p = self.params
-    # add backward compatibility if useSegm is specified in params
-    if p.useSegm is not None:
-        p.iouType = 'segm' if p.useSegm == 1 else 'bbox'
-        print('useSegm (deprecated) is not None. Running {} evaluation'.format(p.iouType))
-    # print('Evaluate annotation type *{}*'.format(p.iouType))
-    p.imgIds = list(np.unique(p.imgIds))
-    if p.useCats:
-        p.catIds = list(np.unique(p.catIds))
-    p.maxDets = sorted(p.maxDets)
-    self.params = p
-
-    self._prepare()
-    # loop through images, area range, max detection number
-    catIds = p.catIds if p.useCats else [-1]
-
-    if p.iouType == 'segm' or p.iouType == 'bbox':
-        computeIoU = self.computeIoU
-    elif p.iouType == 'keypoints':
-        computeIoU = self.computeOks
-    self.ious = {
-        (imgId, catId): computeIoU(imgId, catId)
-        for imgId in p.imgIds
-        for catId in catIds}
-
-    evaluateImg = self.evaluateImg
-    maxDet = p.maxDets[-1]
-    evalImgs = [
-        evaluateImg(imgId, catId, areaRng, maxDet)
-        for catId in catIds
-        for areaRng in p.areaRng
-        for imgId in p.imgIds
-    ]
-    # this is NOT in the pycocotools code, but could be done outside
-    evalImgs = np.asarray(evalImgs).reshape(len(catIds), len(p.areaRng), len(p.imgIds))
-    self._paramsEval = copy.deepcopy(self.params)
-    # toc = time.time()
-    # print('DONE (t={:0.2f}s).'.format(toc-tic))
-    return p.imgIds, evalImgs
 
 #################################################################
 # end of straight copy from pycocotools, just removing the prints

@@ -93,10 +93,10 @@ def evaluate(model: torch.nn.Module,
         # For each batch
         for batch, (images, targets) in enumerate(progress_bar(data_loader, parent=master_progress_bar)):
             # Move images and targets to device
-            images = list(image.to(device) for image in images)
+            new_images = list(image.to(device) for image in images)
             
             # Predict outputs
-            outputs = model(images)
+            outputs = model(new_images)
             
             # Move to CPU for evaluation
             outputs = [{k: v.to("cpu") for k, v in t.items()} for t in outputs]

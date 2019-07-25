@@ -139,6 +139,10 @@ def evaluate(model: torch.nn.Module,
                     dataset['annotations'].append(ann)
                     
                     ann_id += 1
+                if not have_object:
+                    ann = {}
+                    ann['image_id'] = image_id
+                    dataset['annotations'].append(ann)
         dataset['categories'] = catdata
         coco_pred.dataset = dataset
         coco_pred.createIndex()

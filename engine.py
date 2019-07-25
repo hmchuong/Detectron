@@ -119,8 +119,10 @@ def evaluate(model: torch.nn.Module,
                 
                 num_obj = len(bboxes)
                 for i in range(num_obj):
+                    """
                     if labels[i] > 183 or labels[i] < 92:
                         continue
+                        """
                     ann = {}
                     ann['image_id'] = image_id
                     ann['bbox'] = bboxes[i]
@@ -140,7 +142,7 @@ def evaluate(model: torch.nn.Module,
         coco_pred.createIndex()
     import time
     before = time.clock()
-    coco_eval = COCOStuffeval(coco_gt, coco_pred)
+    coco_eval = COCOStuffeval(coco_gt, coco_pred, stuffStartId=0, stuffEndId=182, addOther=False)
     coco_eval.evaluate()
     coco_eval.summarize()
     after = time.clock()

@@ -63,16 +63,16 @@ if __name__ == "__main__":
         description="Mask R-CNN for COCO Stuff dataset"
     )
     parser.add_argument("--train-imagedir",
-                        default="~/cocostuff/dataset/images/train2017",
+                        default="../cocostuff/dataset/images/train2017",
                         help="Image directory of training set")
     parser.add_argument("--train-annodir",
-                        default="~/cocostuff/dataset/annotations/train2017",
+                        default="../cocostuff/dataset/annotations/train2017",
                         help="Annotation directory of training set")
     parser.add_argument("--val-imagedir",
-                        default="~/cocostuff/dataset/images/val2017",
+                        default="../cocostuff/dataset/images/val2017",
                         help="Image directory of validation set")
     parser.add_argument("--val-annodir",
-                        default="~/cocostuff/dataset/annotations/val2017",
+                        default="../cocostuff/dataset/annotations/val2017",
                         help="Annotation directory of validation set")
     parser.add_argument("--num-workers",
                         type=int,

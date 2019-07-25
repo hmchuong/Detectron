@@ -65,7 +65,7 @@ def train_one_epoch(model: nn.Module,
 
         mean_loss = training_loss / (batch + 1)
         other_loss = log_loss(loss_dict_reduced)
-        log = "Mean: %.2f %s" % (current_training_loss, other_loss)
+        log = "Mean: %.2f %s" % (mean_loss, other_loss)
         master_progress_bar.child.comment = log
 
     if torch.cuda.is_available():

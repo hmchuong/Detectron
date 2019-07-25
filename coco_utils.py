@@ -173,13 +173,14 @@ def convert_to_coco_api(ds):
             keypoints = keypoints.reshape(keypoints.shape[0], -1).tolist()
         num_objs = len(bboxes)
         for i in range(num_objs):
+            label = labels[i]
             if labels[i] > 183 or labels[i] < 92:
-                continue
+                label = 183
             ann = {}
             ann['image_id'] = image_id
             ann['bbox'] = bboxes[i]
-            ann['category_id'] = labels[i]
-            categories.add(labels[i])
+            ann['category_id'] = label
+            #categories.add(labels[i])
             ann['area'] = areas[i]
             ann['iscrowd'] = iscrowd[i]
             ann['id'] = ann_id

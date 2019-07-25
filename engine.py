@@ -127,7 +127,7 @@ def evaluate(model: torch.nn.Module,
                     ann['image_id'] = image_id
                     ann['bbox'] = bboxes[i]
                     ann['category_id'] = label
-                    categories.add(labels[i])
+                    #categories.add(labels[i])
                     ann['area'] = areas[i]
                     ann['iscrowd'] = iscrowd[i]
                     ann['id'] = ann_id

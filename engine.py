@@ -133,7 +133,6 @@ def evaluate(model: torch.nn.Module,
                     ann['id'] = ann_id
                     
                     mask = masks[i]
-                    mask[mask == 0] = 183
                     ann['segmentation'] = coco_mask.encode(mask)
                     
                     dataset['annotations'].append(ann)

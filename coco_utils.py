@@ -185,7 +185,6 @@ def convert_to_coco_api(ds):
             ann['id'] = ann_id
             if 'masks' in targets:
                 mask = masks[i].numpy()
-                mask[mask == 0] = 183
                 ann["segmentation"] = coco_mask.encode(mask)
             if 'keypoints' in targets:
                 ann['keypoints'] = keypoints[i]

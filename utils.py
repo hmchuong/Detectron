@@ -71,5 +71,5 @@ def standardlize_masks(masks):
             current_mask[current_mask < 0] = 0
             current_mask[current_mask > 1] = 0
             new_masks[i,:,:] = current_mask
-    print(new_masks)
+    print(np.unique(np.sum(new_masks, axis=0)))
     return new_masks

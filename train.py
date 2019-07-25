@@ -49,7 +49,7 @@ def main(args):
         metrics = evaluate(model, val_dataloader, mb_progressbar, device)
         metric_names = ['mean_iou', 'fw_iou', 'mean_accuracy', 'pixel_accuracy', 'super_mean_iou', 'super_fw_iou', 'super_mean_accuracy', 'super_pixel_accuracy']
         for i, metric_name in enumerate(metric_names):
-            writer.add_scalar('mean_iou', metrics[i], epoch)
+            writer.add_scalar(metric_name, metrics[i], epoch)
             
         lr_scheduler.step()
         torch.save(model.state_dict(), os.path.join(args.log_dir, "model-{}.pth".format(epoch)))
@@ -63,16 +63,16 @@ if __name__ == "__main__":
         description="Mask R-CNN for COCO Stuff dataset"
     )
     parser.add_argument("--train-imagedir",
-                        default="samples/images",
+                        default="~/cocostuff/dataset/images/train2017",
                         help="Image directory of training set")
     parser.add_argument("--train-annodir",
-                        default="samples/annotations",
+                        default="~/cocostuff/dataset/annotations/train2017",
                         help="Annotation directory of training set")
     parser.add_argument("--val-imagedir",
-                        default="samples/images",
+                        default="~/cocostuff/dataset/images/val2017",
                         help="Image directory of validation set")
     parser.add_argument("--val-annodir",
-                        default="samples/annotations",
+                        default="~/cocostuff/dataset/annotations/val2017",
                         help="Annotation directory of validation set")
     parser.add_argument("--num-workers",
                         type=int,
@@ -80,7 +80,7 @@ if __name__ == "__main__":
                         help="Number of CPU cores to process data")
     parser.add_argument("--batch-size",
                         type=int,
-                        default=1,
+                        default=3,
                         help="Batch size")
     parser.add_argument("--lr",
                         type=float,

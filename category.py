@@ -92,5 +92,4 @@ catdata.extend([
     {'id': 181, 'name': 'window-other', 'supercategory': 'window'},
     {'id': 182, 'name': 'wood', 'supercategory': 'solid'}
 ])
-if mergeThings:
-    catdata.extend([{'id': 183, 'name': 'other', 'supercategory': 'other'}])
+catdata.extend([{'id': 183, 'name': 'other', 'supercategory': 'other'}])

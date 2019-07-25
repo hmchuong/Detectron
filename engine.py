@@ -113,7 +113,6 @@ def evaluate(model: torch.nn.Module,
                 areas = (bboxes[:, 3] * bboxes[:, 2]).tolist()
                 bboxes = bboxes.tolist()
                 labels = target['labels'].tolist()
-                areas = (boxes[:, 3] * boxes[:, 2]).tolist()
                 iscrowd = [0] * len(labels)
                 masks = target['masks']
                 masks = masks.permute(0, 2, 1).contiguous().permute(0, 2, 1)

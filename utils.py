@@ -56,3 +56,16 @@ def reduce_dict(input_dict: dict, average: bool=True):
 
 def collate_fn(batch):
     return tuple(zip(*batch))
+
+def standardlize_masks(masks):
+    no_masks = masks.size()[0]
+    new_masks = masks.cpu().numpy()
+    if no_masks == 1:
+        return no_masks
+    for i in range(1,no_masks):
+        for j in range(i-1,-1,-1):
+            current_mask = new_masks[i,:,:]
+            current_mask -= new_masks[j,:,:]
+            current_mask[current_mask < 0] = 0
+            new_masks[i,:,:] = current_mask
+    return new_masks

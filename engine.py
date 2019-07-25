@@ -5,7 +5,7 @@ import torch.nn as nn
 import fastprogress
 from fastprogress import master_bar, progress_bar
 
-from utils import reduce_dict, log_loss
+from utils import reduce_dict, log_loss, standardlize_masks
 from coco_utils import get_coco_api_from_dataset
 from cocostuff_eval import CocStuffEvaluator
 from pycocotools.coco import COCO
@@ -117,6 +117,7 @@ def evaluate(model: torch.nn.Module,
                 iscrowd = [0] * len(labels)
                 masks = target['masks']
                 masks = masks.permute(0, 2, 1).contiguous().permute(0, 2, 1)
+                masks = standardlize_masks(masks)
                 
                 num_obj = len(bboxes)
                 for i in range(num_obj):
@@ -127,12 +128,13 @@ def evaluate(model: torch.nn.Module,
                     ann['image_id'] = image_id
                     ann['bbox'] = bboxes[i]
                     ann['category_id'] = label
-                    #categories.add(labels[i])
                     ann['area'] = areas[i]
                     ann['iscrowd'] = iscrowd[i]
                     ann['id'] = ann_id
                     
-                    ann['segmentation'] = coco_mask.encode(masks[i].numpy())
+                    mask = masks[i]
+                    mask[mask == 0] = 183
+                    ann['segmentation'] = coco_mask.encode(mask)
                     
                     dataset['annotations'].append(ann)
                     

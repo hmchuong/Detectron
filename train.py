@@ -6,6 +6,7 @@ from pathlib import Path
 
 import torch
 from torch.nn.parallel import DistributedDataParallel
+from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import DataLoader
 import torch.optim as optim
 
@@ -17,7 +18,7 @@ from utils import collate_fn
 from model import get_mask_rcnn
 from engine import train_one_epoch, evaluate
 
-#torch.distributed.init_process_group(backend="nccl")
+torch.distributed.init_process_group(backend="nccl")
 
 def main(args):
     writer = SummaryWriter(args.log_dir)
@@ -25,17 +26,20 @@ def main(args):
     train_dataset = COCOStuffDataset(image_dir=args.train_imagedir, annotation_dir=args.train_annodir)
     val_dataset = COCOStuffDataset(image_dir=args.val_imagedir, annotation_dir=args.val_annodir)
     
-    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, collate_fn=collate_fn)
-    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, collate_fn=collate_fn)
+    train_sampler = DistributedSampler(train_dataset)
+    val_sampler = DistributedSampler(val_dataset)
+    train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, collate_fn=collate_fn)
+    val_dataloader = DataLoader(val_dataset, sampler=val_sampler, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, collate_fn=collate_fn)
     
     model = get_mask_rcnn(182+1)
     
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    #device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = torch.device('cuda', arg.local_rank)
     model.to(device)
-    '''
+    
     if device == "cuda":
-        model = DistributedDataParallel(model, device_ids=[0,1,2])
-    '''
+        model = DistributedDataParallel(model, device_ids=[args.local_rank], output_device=args.local_rank)
+    
     # Construct the optimizer
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = optim.Adam(params, lr=args.lr)
@@ -58,9 +62,6 @@ def main(args):
             
         lr_scheduler.step()
         torch.save(model.state_dict(), os.path.join(args.log_dir, "model-{}.pth".format(epoch)))
-        
-        
-    
 
 
 if __name__ == "__main__":

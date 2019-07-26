@@ -30,7 +30,7 @@ def main(args):
     
     model = get_mask_rcnn(182+1)
     
-    model = DistributedDataParallel(model, device_ids=[args.local_rank], output_device=args.local_rank)
+    model = DistributedDataParallel(model)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
     

@@ -34,7 +34,7 @@ def main(args):
     model = get_mask_rcnn(182+1)
     
     #device = "cuda" if torch.cuda.is_available() else "cpu"
-    device = torch.device('cuda', arg.local_rank)
+    device = torch.device('cuda', args.local_rank)
     model.to(device)
     
     if device == "cuda":

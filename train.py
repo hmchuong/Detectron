@@ -30,9 +30,10 @@ def main(args):
     
     model = get_mask_rcnn(182+1)
     
-    model = DistributedDataParallel(model)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
+    if device == "cuda":
+        model = DistributedDataParallel(model)
     
     # Construct the optimizer
     params = [p for p in model.parameters() if p.requires_grad]

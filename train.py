@@ -26,7 +26,7 @@ def main(args):
     invalid_ids = []
     with open(args.invalid_images, "r") as f:
         for line in f.readlines():
-            invalid_ids.append(line.split("/")[-1].replace(".png", ""))
+            invalid_ids.append(line.strip().split("/")[-1].replace(".png", ""))
     
     train_dataset = COCOStuffDataset(invalid_ids, image_dir=args.train_imagedir, annotation_dir=args.train_annodir)
     val_dataset = COCOStuffDataset(invalid_ids, image_dir=args.val_imagedir, annotation_dir=args.val_annodir)

@@ -34,7 +34,7 @@ class COCOStuffDataset(object):
     def __len__(self):
         """Length of the dataset
         """
-        return len(self.image_paths)
+        return len(self.image_paths) - len(self.invalid_images)
     
     def __getitem__(self, index):
         """Get item at index
@@ -91,14 +91,13 @@ class COCOStuffDataset(object):
                 # Add label
                 if mask_label not in self.label_indices: print(mask_label)
                 labels.append(mask_label + 1)
-        if len(boxes == 0):
-            return self[random.randint(0, len(self)-1)]
+
         boxes = torch.as_tensor(boxes, dtype=torch.float32)
         labels = torch.as_tensor(labels, dtype=torch.int64)
         masks = torch.as_tensor(masks, dtype=torch.uint8)
         
         image_id = torch.tensor([index])
-        area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
+        area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0]) if len(boxes) > 0 else torch.as_tensor([], dtype=torch.float32)
         iscrowd = torch.zeros((len(boxes),), dtype=torch.int64)
         
         target = {}

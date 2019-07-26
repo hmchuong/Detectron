@@ -101,6 +101,10 @@ if __name__ == "__main__":
                         type=str,
                         default="results",
                         help="Log directory")
+    parser.add_argument("--local_rank",
+                        type=int,
+                        default=0,
+                        help="Local rank")
     
     args = parser.parse_args()
     main(args)

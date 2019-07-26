@@ -1,0 +1,7 @@
+../cocostuff/dataset/annotations/train2017/000000429995.png
+../cocostuff/dataset/annotations/train2017/000000458540.png
+../cocostuff/dataset/annotations/train2017/000000182607.png
+../cocostuff/dataset/annotations/train2017/000000513111.png
+../cocostuff/dataset/annotations/train2017/000000016449.png
+../cocostuff/dataset/annotations/train2017/000000563076.png
+../cocostuff/dataset/annotations/train2017/000000262189.png

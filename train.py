@@ -17,7 +17,7 @@ from utils import collate_fn
 from model import get_mask_rcnn
 from engine import train_one_epoch, evaluate
 
-torch.distributed.init_process_group(backend="nccl")
+#torch.distributed.init_process_group(backend="nccl")
 
 def main(args):
     writer = SummaryWriter(args.log_dir)
@@ -32,9 +32,10 @@ def main(args):
     
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
+    '''
     if device == "cuda":
         model = DistributedDataParallel(model, device_ids=[0,1,2])
-    
+    '''
     # Construct the optimizer
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = optim.Adam(params, lr=args.lr)

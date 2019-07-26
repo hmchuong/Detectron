@@ -17,7 +17,7 @@ from utils import collate_fn
 from model import get_mask_rcnn
 from engine import train_one_epoch, evaluate
 
-
+torch.distributed.init_process_group(backend="nccl")
 
 def main(args):
     writer = SummaryWriter(args.log_dir)
@@ -29,7 +29,7 @@ def main(args):
     val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, collate_fn=collate_fn)
     
     model = get_mask_rcnn(182+1)
-    torch.distributed.init_process_group(backend="nccl")
+    
     model = DistributedDataParallel(model, device_ids=[args.local_rank], output_device=args.local_rank)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)

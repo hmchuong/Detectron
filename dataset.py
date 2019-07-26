@@ -34,7 +34,7 @@ class COCOStuffDataset(object):
     def __len__(self):
         """Length of the dataset
         """
-        return len(self.image_paths) - len(self.invalid_images)
+        return len(self.image_paths)
     
     def __getitem__(self, index):
         """Get item at index

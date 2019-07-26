@@ -23,8 +23,13 @@ def main(args):
     device = torch.device(args.device)
     writer = SummaryWriter(args.log_dir)
     
-    train_dataset = COCOStuffDataset(image_dir=args.train_imagedir, annotation_dir=args.train_annodir)
-    val_dataset = COCOStuffDataset(image_dir=args.val_imagedir, annotation_dir=args.val_annodir)
+    invalid_ids = []
+    with open(args.invalid_images, "r") as f:
+        for line in f.readlines():
+            invalid_ids.append(line.split("/")[-1].replace(".png", ""))
+    
+    train_dataset = COCOStuffDataset(invalid_ids, image_dir=args.train_imagedir, annotation_dir=args.train_annodir)
+    val_dataset = COCOStuffDataset(invalid_ids, image_dir=args.val_imagedir, annotation_dir=args.val_annodir)
     
     train_sampler = DistributedSampler(train_dataset)
     val_sampler = DistributedSampler(val_dataset)
@@ -106,6 +111,10 @@ if __name__ == "__main__":
                         type=str,
                         default="results",
                         help="Log directory")
+    parser.add_argument("--invalid_images",
+                        type=str,
+                        default="invalid_images.txt",
+                        help="Invalid images")
     parser.add_argument("--local_rank",
                         type=int,
                         default=0,

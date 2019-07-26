@@ -25,8 +25,12 @@ class COCOStuffDataset(object):
     background_index: int
         index of unlabeled/ background
     """
-    def __init__(self, image_dir: str, annotation_dir: str, label_indices: list=list(range(182)), background_index: int=255):
-        self.image_paths = glob.glob(os.path.join(image_dir, "*.jpg")) # Get all .jpg files
+    def __init__(self, invalid_image_ids, image_dir: str, annotation_dir: str, label_indices: list=list(range(182)), background_index: int=255):
+        self.image_paths = []# Get all .jpg files
+        for image_path in glob.glob(os.path.join(image_dir, "*.jpg")):
+            if image_path.split('/')[-1].replace(".jpg", "") in invalid_image_ids:
+                continue
+            self.image_paths.append(image_path)
         self.annotation_dir = annotation_dir
         self.label_indices = label_indices
         self.background_index = background_index

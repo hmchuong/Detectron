@@ -15,7 +15,7 @@ from category import catdata
 
 def train_one_epoch(model: nn.Module, 
                     optimizer: torch.optim.Optimizer, 
-                    data_loader: torch.utils.data.DataLoader, 
+                    data_loader: torch.utils.data.DataLoader,
                     master_progress_bar: master_bar,
                     device: str="cpu"):
     """Train model in one epoch
@@ -81,7 +81,8 @@ def evaluate(model: torch.nn.Module,
              data_loader: torch.utils.data.DataLoader, 
              master_progress_bar: fastprogress.master_bar,
              device: str="cpu"):
-
+    n_threads = torch.get_num_threads()
+    torch.set_num_threads(1)
     model.eval()
     coco_gt = get_coco_api_from_dataset(data_loader.dataset)
     coco_pred = COCO()
@@ -149,7 +150,7 @@ def evaluate(model: torch.nn.Module,
     coco_eval.summarize()
     after = time.clock()
     print('Evaluation took %.2fs!' % (after - before))
-    
+    torch.set_num_threads(n_threads)
     return coco_eval.stats
     
             

@@ -14,13 +14,13 @@ from fastprogress import master_bar
 from tensorboardX import SummaryWriter
 
 from dataset import COCOStuffDataset
-from utils import collate_fn
+from utils import collate_fn, init_distributed_mode
 from model import get_mask_rcnn
 from engine import train_one_epoch, evaluate
 
-torch.distributed.init_process_group(backend="nccl")
-
 def main(args):
+    init_distributed_mode(args)
+    device = torch.device(args.device)
     writer = SummaryWriter(args.log_dir)
     
     train_dataset = COCOStuffDataset(image_dir=args.train_imagedir, annotation_dir=args.train_annodir)
@@ -29,16 +29,16 @@ def main(args):
     train_sampler = DistributedSampler(train_dataset)
     val_sampler = DistributedSampler(val_dataset)
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.batch_size, num_workers=args.num_workers, collate_fn=collate_fn)
-    val_dataloader = DataLoader(val_dataset, sampler=val_sampler, batch_size=args.batch_size, num_workers=args.num_workers, collate_fn=collate_fn)
+    val_dataloader = DataLoader(val_dataset, sampler=val_sampler, batch_size=1, num_workers=args.num_workers, collate_fn=collate_fn)
     
     model = get_mask_rcnn(182+1)
     
     #device = "cuda" if torch.cuda.is_available() else "cpu"
-    device = torch.device('cuda', args.local_rank)
+    
     model.to(device)
     
     if device == "cuda":
-        model = DistributedDataParallel(model, device_ids=[args.local_rank], output_device=args.local_rank)
+        model = DistributedDataParallel(model, device_ids=[args.gpu])
     
     # Construct the optimizer
     params = [p for p in model.parameters() if p.requires_grad]
@@ -48,6 +48,7 @@ def main(args):
     mb_progressbar = master_bar(range(args.epochs))
     Path(args.log_dir).mkdir(exist_ok=True)
     for epoch in mb_progressbar:
+        train_sampler.set_epoch(epoch)
         # Training
         mean_loss, loss_dict = train_one_epoch(model, optimizer, train_dataloader, mb_progressbar, device)
         writer.add_scalar('train_mean_loss', mean_loss, epoch)
@@ -108,6 +109,9 @@ if __name__ == "__main__":
                         type=int,
                         default=0,
                         help="Local rank")
+    parser.add_argument('--world-size', default=1, type=int,
+                        help='number of distributed processes')
+    parser.add_argument('--dist-url', default='env://', help='url used to set up distributed training')
     
     args = parser.parse_args()
     main(args)

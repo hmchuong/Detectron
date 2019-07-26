@@ -27,6 +27,7 @@ class COCOStuffDataset(object):
     """
     def __init__(self, invalid_image_ids, image_dir: str, annotation_dir: str, label_indices: list=list(range(182)), background_index: int=255):
         self.image_paths = []# Get all .jpg files
+        print(invalid_image_ids)
         print(len(glob.glob(os.path.join(image_dir, "*.jpg"))))
         for image_path in glob.glob(os.path.join(image_dir, "*.jpg")):
             if image_path.split('/')[-1].replace(".jpg", "") in invalid_image_ids:

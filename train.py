@@ -33,7 +33,7 @@ def main(args):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
     if device == "cuda":
-        model = DistributedDataParallel(model)
+        model = DistributedDataParallel(model, device_ids=[0,1,2])
     
     # Construct the optimizer
     params = [p for p in model.parameters() if p.requires_grad]

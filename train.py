@@ -81,6 +81,7 @@ if __name__ == "__main__":
     parser.add_argument("--val-annodir",
                         default="../cocostuff/dataset/annotations/val2017",
                         help="Annotation directory of validation set")
+    parser.add_argument('--device', default='cuda', help='device')
     parser.add_argument("--num-workers",
                         type=int,
                         default=34,

@@ -76,11 +76,11 @@ if __name__ == "__main__":
                         help="Annotation directory of validation set")
     parser.add_argument("--num-workers",
                         type=int,
-                        default=4,
+                        default=34,
                         help="Number of CPU cores to process data")
     parser.add_argument("--batch-size",
                         type=int,
-                        default=3,
+                        default=2,
                         help="Batch size")
     parser.add_argument("--lr",
                         type=float,

@@ -2,6 +2,7 @@
 """
 import os
 import glob
+import random
 
 import numpy as np
 from scipy import ndimage
@@ -90,7 +91,8 @@ class COCOStuffDataset(object):
                 # Add label
                 if mask_label not in self.label_indices: print(mask_label)
                 labels.append(mask_label + 1)
-        
+        if len(boxes == 0):
+            return self[random.randint(0, len(self)-1)]
         boxes = torch.as_tensor(boxes, dtype=torch.float32)
         labels = torch.as_tensor(labels, dtype=torch.int64)
         masks = torch.as_tensor(masks, dtype=torch.uint8)

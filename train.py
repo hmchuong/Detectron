@@ -28,8 +28,8 @@ def main(args):
     
     train_sampler = DistributedSampler(train_dataset)
     val_sampler = DistributedSampler(val_dataset)
-    train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, collate_fn=collate_fn)
-    val_dataloader = DataLoader(val_dataset, sampler=val_sampler, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, collate_fn=collate_fn)
+    train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.batch_size, num_workers=args.num_workers, collate_fn=collate_fn)
+    val_dataloader = DataLoader(val_dataset, sampler=val_sampler, batch_size=args.batch_size, num_workers=args.num_workers, collate_fn=collate_fn)
     
     model = get_mask_rcnn(182+1)
     
